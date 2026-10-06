@@ -41,7 +41,9 @@ async def main():
     __ANDROID__ = hasattr(sys, "getandroidapilevel")
     __EMSCRIPTEN__ = hasattr(sys, "_emscripten_info")
     
+    pygame.mixer.pre_init(44100, -16, 2, 1024)
     pygame.init()
+    pygame.mixer.set_num_channels(64)
     MAINCLOCK = pygame.time.Clock()
     if __ANDROID__:
         DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT),
@@ -153,7 +155,7 @@ async def runGame():
                     drawInfo(boardToDraw, playerTile, computerTile, turn)
                     DISPLAYSURF.blit(newGameSurf, newGameRect)
                     DISPLAYSURF.blit(hintsSurf, hintsRect)
-                    MAINCLOCK.tick(FPS)
+                    MAINCLOCK.tick()
                     pygame.display.update()
                     await asyncio.sleep(0)
                 await makeMove(mainBoard, playerTile, movexy[0], movexy[1], True, mainBoard)
@@ -229,7 +231,7 @@ async def runGame():
         DISPLAYSURF.blit(yesSurf, yesRect)
         DISPLAYSURF.blit(noSurf, noRect)
         pygame.display.update()
-        MAINCLOCK.tick(FPS)
+        MAINCLOCK.tick()
         await asyncio.sleep(0)
 
 def translateBoardToPixelCoord(x, y):
@@ -243,7 +245,7 @@ async def animateTileChange(tilesToFlip, tileColor, additionalTile, mainBoard):
     additionalTileX, additionalTileY = translateBoardToPixelCoord(additionalTile[0], additionalTile[1])
     pygame.draw.circle(DISPLAYSURF, additionalTileColor, (additionalTileX, additionalTileY), int(SPACESIZE / 2) - 4)
     pygame.display.update()
-    MAINCLOCK.tick(ANIMATIONSPEED)
+    MAINCLOCK.tick()
     
     for rgbValues in range(0, 255, int(ANIMATIONSPEED * 2.55)):
         
@@ -259,7 +261,7 @@ async def animateTileChange(tilesToFlip, tileColor, additionalTile, mainBoard):
         
         drawBoard(mainBoard)
         pygame.display.update()
-        MAINCLOCK.tick(ANIMATIONSPEED)
+        MAINCLOCK.tick()
         pygame.event.pump()
         await asyncio.sleep(0)
 
@@ -347,7 +349,7 @@ async def enterPlayerTile():
         DISPLAYSURF.blit(xSurf, xRect)
         DISPLAYSURF.blit(oSurf, oRect)
         pygame.display.update()
-        MAINCLOCK.tick(FPS)
+        MAINCLOCK.tick()
         await asyncio.sleep(0)
 
 async def makeMove(board, tile, xstart, ystart, realMove=False, mainBoard=None):
